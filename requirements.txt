@@ -1,0 +1,22 @@
+# Core ML stack
+torch
+torchvision
+# torchaudio==2.2.0
+
+# MMCV for model components and utilities
+mmcv==1.3.14
+
+# General utilities
+pandas
+scikit-learn
+omegaconf
+termcolor
+timm
+matplotlib
+seaborn
+
+# Logging, visualization, and distributed training
+wandb
+
+
+

@@ -1,0 +1,115 @@
+data:
+  lowerquantile: 'lowerboud' #In training file(train.csv), <trait>_lowerbound column is used as lowerbound for dynamic sampling, it is Q1 of trait value distribution from TRY6, but can be customized
+  batch_size: 256 
+  pin_memory: true
+
+  # number of workers for dataloader
+  train_dataloader_workers: 8
+  val_dataloader_workers: 2
+
+  # seed for reproducibility
+  seed: 0
+  target_transformer: 
+    preload: True
+    # scale/transform target values from training data and save the transformer to transform dynamically sampled trait values during training
+    transformer_path: 'path/to/scalar.pkl'
+  
+  #Use weighted sampling based Plant Functional Type(PFT) inferred from GBIF to have balanced sampling across Grass, Tree, Shrub
+  weighted_sampling: true
+  weighted_col: 'PFT'
+
+  #Download data from https://huggingface.co/datasets/ayushi3536/PlantTraitNet/tree/main 
+  data_path: '/path/to/data'
+
+  #meta data for each dataset
+  path_imgref_train: '/data/train/train.csv'
+  path_imgref_val: '/data/val/val.csv'
+  target_prefix: ['Height', 'LeafArea', 'SLA', 'Leaf_N'] #replace with desired traits, keep the order consistent for multi-trait training
+
+
+#Multi-trait model with image, depthmap and geo encoders
+model:
+  type: PlantTraitNet
+  modality: 'image_geo' #set to 'image' for image only model
+  output_traits: 4
+  layernorm: true
+  n_blocks: 8
+  fusion_dim: 1024 # 768+768, to make the experiment comparable with iter6_img_climplicit and iter6_withoutdepth(climplicit)
+  d_hidden_multiplier: 2.0
+  dropout1: 0.2
+  dropout2: 0.2
+  fusion: 
+    type: ConcatFusionModule
+  image_encoder:
+      type: Dinov2
+      output_feat_size: 768
+  depthmap_encoder:
+      type: DepthMapEncoder
+      output_feat_size: 768 #should be 384 or higher(512,768)
+      depth:
+        include_depth_encoding: True
+        depth_encoder: vitb
+        dino_layer_idx: 
+          vitb: [2, 5, 8, 11]
+        pool_dim: 64
+        out_dim: 
+          vitb: 768
+  
+  geo_encoder:
+      type: Climplicit
+      output_feat_size: 256
+  #If using Single Trait, use 'WeightedGaussianNLLLoss' for Height, SLA, Leaf_N and ''WeightedL1NLLLoss'' for LeafArea
+  loss: 'MixedNLLLoss'
+
+
+
+train:
+  start_epoch: 0
+  epochs: 30
+  warmup_epochs: 30
+  weight_decay: 0.00005
+  warmup_lr: 0.00001
+  min_lr: 0.000005
+  
+  clip_grad: 1.0 
+
+  lr_scheduler:
+    name: cosine
+    cycle_limit: 1
+    decay_epochs: 30
+
+  finetune:
+    #If finetune is true, we load the model from the resume path and only train the last layer, freeze 6 layers
+    img_encoder_params_prefix: []
+
+  optimizer:
+    name: adamw
+    eps: 1e-8
+    betas: [0.9, 0.999]
+    base_lr: 0.000005
+
+
+evaluate:
+  #This check would disable loading of optimizer and scheduler if set to true
+  pre_eval: false # Eval before training starts, useful for debugging
+  eval_only: false
+  eval_freq: 31
+  save_best: false
+
+checkpoint:
+  auto_resume: true
+  resume: ''
+  loadonlymodel: false
+  evaluate_checkpoint: false
+  freq: 1
+  max_kept: -1
+  save_freq: 1
+  
+
+model_name: 'planttraitnet' # display name in the logger
+output: ???
+wandb_output: ''
+tag: default
+print_freq: 1
+seed: 0
+wandb: True
