@@ -18,5 +18,12 @@ seaborn
 # Logging, visualization, and distributed training
 wandb
 
-
+#Benchmarking 
+xarray
+rioxarray
+python-dotenv 
+pyyaml 
+python-box
+shapely
+pyarrow
 
