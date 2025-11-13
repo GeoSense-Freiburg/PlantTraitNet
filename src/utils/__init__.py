@@ -9,6 +9,12 @@ from .configutils import load_class_from_config
 from .classfactory import instantiate_object
 from .misc import ListAverageMeter, set_random_seed
 from .metrics import plothexbin
+from .benchmark_utils import (
+    read_trait_map,
+    global_grid_df,
+    get_lat_area,
+    )
+from .benchmark_conf import get_config
 
 
 __all__ = [
@@ -30,4 +36,8 @@ __all__ = [
     "ListAverageMeter",
     "set_random_seed",
     "plothexbin",
+    "read_trait_map",
+    "global_grid_df",
+    "get_lat_area",
+    "get_config",
     ]

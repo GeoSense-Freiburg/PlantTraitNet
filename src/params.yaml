@@ -1,0 +1,9 @@
+version: "1.1.0"
+model_res: "1deg"
+PFT: "Shrub_Tree_Grass"
+random_seed: 42
+interim_dir: src/benchmarking/trait_maps
+splot:
+  interim:
+    extracted: extracted
+    traits: trait_maps
