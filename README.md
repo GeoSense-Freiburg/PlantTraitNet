@@ -58,9 +58,16 @@ snapshot_download("ayushi3536/PlantTraitNet", local_dir='.', repo_type='model')
 ```
 
 ## Citation
-
+Coming soon: Citation of published verison
 ```bibtex
-To be Updated Soon
+@misc{sharma2025planttraitnetuncertaintyawaremultimodalframework,
+      title={PlantTraitNet: An Uncertainty-Aware Multimodal Framework for Global-Scale Plant Trait Inference from Citizen Science Data}, 
+      author={Ayushi Sharma and Johanna Trost and Daniel Lusk and Johannes Dollinger and Julian Schrader and Christian Rossi and Javier Lopatin and Etienne Laliberté and Simon Haberstroh and Jana Eichel and Daniel Mederer and Jose Miguel Cerda-Paredes and Shyam S. Phartyal and Lisa-Maricia Schwarz and Anja Linstädter and Maria Conceição Caldeira and Teja Kattenborn},
+      year={2025},
+      eprint={2511.06943},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2511.06943}, 
 }
 ```
 
