@@ -1,6 +1,6 @@
 """
 Parses a params.yaml file (located at src/benchmarking/params.yaml)
-to return a config object that can be used in other scripts.
+to return a config object that can be used in benchmarking scripts.
 """
 
 import yaml
@@ -22,7 +22,7 @@ def parse_params() -> dict:
         return yaml.safe_load(f)
 
 
-def get_config(subset: str = None) -> ConfigBox:
+def get_benchmark_config(subset: str = None) -> ConfigBox:
     """
     Get a ConfigBox object (attribute-accessible dict) from params.yaml.
     If a subset is specified, returns only that section.
@@ -31,4 +31,4 @@ def get_config(subset: str = None) -> ConfigBox:
     return config[subset] if subset is not None else config
 
 if __name__ == "__main__":
-    print(get_config())
+    print(get_benchmark_config())

@@ -27,3 +27,6 @@ python-box
 shapely
 pyarrow
 
+# Climplicit
+rshf
+
