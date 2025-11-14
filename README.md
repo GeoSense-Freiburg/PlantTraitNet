@@ -23,11 +23,6 @@ git clone https://github.com/DepthAnything/Depth-Anything-V2
 cd Depth-Anything-V2
 pip install -r requirements.txt
 
-#To install Climplicit(https://github.com/ecovision-uzh/climplicit)
-git clone https://github.com/ecovision-uzh/climplicit.git
-cd climplicit/quickstart
-
-
 ```
 
 
