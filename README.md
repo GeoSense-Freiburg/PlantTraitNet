@@ -2,6 +2,12 @@
 
 
 <!-- *Overview of the pipeline of PlantTraitNet* -->
+<p align="center">
+  <img src="figures/active_learning.png" alt="PlantTraitNet Pipeline" width="100%">
+</p>
+**Figure 1:** Overview of the pipeline. We filter weakly labeled citizen science data (Raw data) based on high model uncertainty
+(Step 1) and large residuals from species trait medians (Step 2). We use this refined data for training the models (Step 3), which
+are evaluated by comparing spatially aggregated predictions (1° resolution) against overlapping vegetation surveys (sPlotOpen).
 
 ## Overview
 
@@ -50,8 +56,6 @@ This can be done directly via [Hugging Face](https://huggingface.co/ayushi3536/P
 from huggingface_hub import snapshot_download
 snapshot_download("ayushi3536/PlantTraitNet", local_dir='.', repo_type='model')
 ```
-
-
 
 ## Citation
 
