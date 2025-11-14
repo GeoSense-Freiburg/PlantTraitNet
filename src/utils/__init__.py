@@ -14,7 +14,9 @@ from .benchmark_utils import (
     global_grid_df,
     get_lat_area,
     )
-from .benchmark_conf import get_config
+from .read_config import get_config
+from .benchmark_conf import get_benchmark_config
+
 
 
 __all__ = [
@@ -40,4 +42,5 @@ __all__ = [
     "global_grid_df",
     "get_lat_area",
     "get_config",
+    "get_benchmark_config",
     ]

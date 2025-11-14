@@ -13,9 +13,9 @@ from box import ConfigBox
 import xarray as xr
 import rioxarray as riox
 
-from utils.benchmark_conf import get_config
+from utils.benchmark_conf import get_benchmark_config
 
-cfg = get_config()
+cfg = get_benchmark_config()
 
 
 def global_grid_df(
