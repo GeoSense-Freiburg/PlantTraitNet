@@ -1,6 +1,11 @@
 # PlantTraitNet: An Uncertainty-Aware Multimodal Framework for Global-Scale Plant Trait Inference from Citizen Science Data
 
 
+
+[![arXiv](https://img.shields.io/badge/arXiv-2511.06943-b31b1b.svg)](https://arxiv.org/abs/2511.06943)
+![GitHub License](https://img.shields.io/github/license/utn-air/flownav?label=License&color=%23e11d48&cacheSeconds=60)
+
+
 <!-- *Overview of the pipeline of PlantTraitNet* -->
 <p align="center">
   <img src="figures/active_learning.png" alt="PlantTraitNet Pipeline" width="100%">
@@ -24,6 +29,9 @@ cd Depth-Anything-V2
 pip install -r requirements.txt
 
 ```
+## Resources  
+- [Data](https://huggingface.co/datasets/ayushi3536/PlantTraitNet)  
+- [Pretrained Models](https://huggingface.co/ayushi3536/PlantTraitNet)
 
 
 ## Training
@@ -38,18 +46,34 @@ Alternatively you can clone the repository:
 git clone https://huggingface.co/datasets/ayushi3536/PlantTraitNet
 ```
 
-Now, to train **PlantTraitNet** models, set the paths correctly, adapt training configs in `/configs/default.yaml` and train PlantTraitNet by running:
+To train **PlantTraitNet** models, set the paths correctly, adapt training configs in `/configs/default.yaml` and train PlantTraitNet by running:
 ```bash
 
 python python src/train.py --cfg /src/configs/default.yml --output /path/to/output
 ```
 
 
-## Pretrained Models
-This can be done directly via [Hugging Face](https://huggingface.co/ayushi3536/PlantTraitNet/tree/main, using the `huggingface_hub` library:
+
+## Inference
+Download pretrained models from [Hugging Face](https://huggingface.co/ayushi3536/PlantTraitNet/tree/main, using the `huggingface_hub` library:
 ```python
 from huggingface_hub import snapshot_download
 snapshot_download("ayushi3536/PlantTraitNet", local_dir='.', repo_type='model')
+```
+To run inference on  **PlantTraitNet** models, set the paths correctly, adapt training configs in `/configs/default.yaml` and train PlantTraitNet by running:
+```bash
+
+python src/inference.py --cfg /src/configs/default.yml --checkpoint /path/to/pretrained_model --output_dir /path/to/output --trait ['Height','LeafArea','SLA', 'Leaf_N']
+```
+
+
+## Benchmarking
+Run inference on benchmark_data and validation split 
+```
+To benchmark use script benchmarking/benchmarking_against_sPlotOpen or alternatively benchmark.ipynb(notebook)
+```bash
+
+PYTHONPATH=src python -m benchmarking.benchmarking_against_sPlotOpen   --base_dir </path/to/inference_results>   --output_dir </path/to/output_dir>   --valmeta_path '/path/to val.csv (or benchmarking.csv) '
 ```
 
 ## Citation
