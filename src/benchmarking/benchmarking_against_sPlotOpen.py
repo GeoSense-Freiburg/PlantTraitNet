@@ -16,12 +16,10 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
 import seaborn as sns
 
-from utils.benchmark_conf import get_config
+from utils.benchmark_conf import get_benchmark_config
 from utils.benchmark_utils import read_trait_map, global_grid_df, lat_weights
 
-cfg = get_config()
-
-
+cfg = get_benchmark_config()
 # -------------------- METRICS --------------------
 def weighted_pearsonr(x, y, w):
     mean_x, mean_y = np.average(x, weights=w), np.average(y, weights=w)
@@ -128,12 +126,19 @@ def splot_benchmarking(pred, cfg, traits, out_dir, n_min=20):
     for t in traits:
         splot_df = read_trait_map(t, "splot", band=1).to_dataframe(name=t).drop(columns=["band", "spatial_ref"]).dropna()
 
-        grid_true = global_grid_df(pred, f"{t}_true", lon="Longitude", lat="Latitude", res=1, stats=["mean"])
-        grid_pred = global_grid_df(pred, f"{t}_pred", lon="Longitude", lat="Latitude", res=1, stats=["mean"])
+        grid_true = global_grid_df(pred, f"{t}_true", lon="Longitude", lat="Latitude", res=1, stats=["mean"], n_min=n_min)
+        grid_pred = global_grid_df(pred, f"{t}_pred", lon="Longitude", lat="Latitude", res=1, stats=["mean"], n_min=n_min)
+        
+        print(f"sPlot df shape for {t}: {splot_df.shape}")
+        print(f"Grid true shape for {t}: {grid_true.shape}")
+        print(f"Grid pred shape for {t}: {grid_pred.shape}")
 
         # Join on grid index (y, x)
         merged = grid_true.join(grid_pred, lsuffix="_true", rsuffix="_pred", how="inner")
         merged = merged.join(splot_df, how="inner")
+        
+        print(f"Merged df shape for {t}: {merged.shape}")
+        
 
         merged.rename(columns={t: f"{t}_splot", "mean_true": f"{t}_true", "mean_pred": f"{t}_pred"}, inplace=True)
         merged = merged[[f"{t}_splot", f"{t}_true", f"{t}_pred"]].dropna()
@@ -145,6 +150,8 @@ def splot_benchmarking(pred, cfg, traits, out_dir, n_min=20):
         combined_path = out_dir / "combined_data" / f"{t}_splot_vs_model_1deg_nmin{n_min}.parquet"
         combined_path.parent.mkdir(parents=True, exist_ok=True)
         merged.reset_index().to_parquet(combined_path)
+        print(f"Saved combined data for {t} at {combined_path}")
+        
 
         lat_wts = lat_weights(merged.index.get_level_values("y").unique().values, 1)
 
@@ -176,9 +183,11 @@ def splot_benchmarking(pred, cfg, traits, out_dir, n_min=20):
 # -------------------- UTILITIES --------------------
 def get_result_dirs(base_dir):
     dirs = sorted(glob(os.path.join(base_dir, "results_ckpt_epoch_*")))
+    print(f"Found {len(dirs)} result directories in {base_dir}:{dirs}")
     file_pairs = []
     for d in dirs:
-        for val_path in glob(os.path.join(d, "ckpt_*.csv")):
+        for val_path in glob(os.path.join(d, "*ckpt_*.csv")):
+            print(f"Checking validation file: {val_path}")
             norm = os.path.join(d, f"normalized_{os.path.basename(val_path)}")
             if os.path.exists(norm):
                 file_pairs.append((val_path, norm))
@@ -190,6 +199,7 @@ def run_benchmark(seed_dirs, valmeta, cfg, out_dir, traits, n_min):
     for seed, epochs in seed_dirs.items():
         for epoch, files in epochs.items():
             pred = prepare_data(files["val"], files["normval"], valmeta, traits)
+            
             print(f"Running benchmarking for Seed {seed}, Epoch {epoch} — {len(pred)} samples")
             res = splot_benchmarking(pred, cfg, traits, out_dir, n_min)
             for r in res:
