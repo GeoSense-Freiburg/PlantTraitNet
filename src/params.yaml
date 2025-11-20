@@ -2,7 +2,8 @@ version: "1.1.0"
 model_res: "1deg"
 PFT: "Shrub_Tree_Grass"
 random_seed: 42
-interim_dir: src/benchmarking/trait_maps
+#Download traitmaps from https://huggingface.co/datasets/ayushi3536/PlantTraitNet/tree/main/trait_maps
+interim_dir: <>/PlantTraitNet/src/benchmarking/trait_maps #absolute path
 splot:
   interim:
     extracted: extracted

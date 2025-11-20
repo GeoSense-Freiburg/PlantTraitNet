@@ -38,6 +38,7 @@ def global_grid_df(
 
     stat_funcs = {
         "mean": "mean",
+        "count": "count",
     }
 
     df = df.copy()
