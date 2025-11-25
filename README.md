@@ -69,8 +69,8 @@ python src/inference.py --cfg /src/configs/default.yml --checkpoint /path/to/pre
 
 ## Benchmarking
 Run inference on benchmark_data and validation split 
-```
-To benchmark use script benchmarking/benchmarking_against_sPlotOpen or alternatively benchmark.ipynb(notebook)
+
+To benchmark, use script benchmarking/benchmarking_against_sPlotOpen or alternatively benchmark.ipynb(notebook)
 ```bash
 
 PYTHONPATH=src python -m benchmarking.benchmarking_against_sPlotOpen   --base_dir </path/to/inference_results>   --output_dir </path/to/output_dir>   --valmeta_path '/path/to val.csv (or benchmarking.csv) '
