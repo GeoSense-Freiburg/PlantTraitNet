@@ -13,6 +13,7 @@ from .benchmark_utils import (
     read_trait_map,
     global_grid_df,
     get_lat_area,
+    create_sample_raster
     )
 from .read_config import get_config
 from .benchmark_conf import get_benchmark_config

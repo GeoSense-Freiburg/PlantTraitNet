@@ -4,7 +4,7 @@ Utility functions for benchmarking.
 import os
 import warnings
 import pandas as pd
-from typing import Iterable, Union, Optional, List, Dict
+from typing import Iterable, Union, Optional, List, Dict, Tuple
 from pyproj import Proj
 from shapely.geometry import shape
 import json
@@ -12,7 +12,7 @@ from pathlib import Path
 from box import ConfigBox
 import xarray as xr
 import rioxarray as riox
-
+import numpy as np
 from utils.benchmark_conf import get_benchmark_config
 
 cfg = get_benchmark_config()
@@ -133,3 +133,44 @@ def read_trait_map(
     if band is not None:
         return open_raster(fn).sel(band=band)
     return open_raster(fn)
+
+
+
+def coord_decimal_places(resolution: Union[int, float]) -> int:
+    """Return decimal count required to represent grid centroids."""
+    result_str = f"{resolution/2:.20f}".rstrip("0")
+    return len(result_str.split(".")[1]) if "." in result_str else 0
+
+
+def generate_epsg4326_grid(
+    resolution: Union[int, float], extent: Optional[List[Union[int, float]]] = None
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Generate grid coordinates in EPSG:4326."""
+    if extent is None:
+        extent = [-180, -90, 180, 90]
+
+    xmin, ymin, xmax, ymax = extent
+    width = int((xmax - xmin) / resolution)
+    height = int((ymax - ymin) / resolution)
+    decimals = coord_decimal_places(resolution)
+    half_res = resolution * 0.5
+
+    x_coords = np.round(np.linspace(xmin + half_res, xmax - half_res, width), decimals)
+    y_coords = np.round(np.linspace(ymax - half_res, ymin + half_res, height), decimals)
+
+    return x_coords, y_coords
+
+
+def create_sample_raster(
+    extent: Optional[List[Union[int, float]]] = None,
+    resolution: Union[int, float] = 1,
+    crs: str = "EPSG:4326",
+) -> xr.Dataset:
+    """Generate an empty sample raster dataset at target resolution."""
+    if crs == "EPSG:4326":
+        x_coords, y_coords = generate_epsg4326_grid(resolution, extent)
+    else:
+        raise ValueError("Extent must be provided for non-EPSG:4326 CRS.")
+
+    ds = xr.Dataset({"y": (("y"), y_coords), "x": (("x"), x_coords)})
+    return ds.rio.write_crs(crs)
